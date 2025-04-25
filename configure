@@ -20,7 +20,7 @@ elif os.path.exists('./buck.pex'):
     print("Found local buck.pex")
 else:
     print("Getting Buck...")
-    os.system('curl -o buck.pex -L http://fs.csl.utoronto.ca/~mike/buck.pex') # Java11 Compatible build
+    os.system('curl -o buck.pex -L https://jitpack.io/com/github/facebook/buck/v2022.05.05.01/buck-v2022.05.05.01.pex') # Java11 Compatible build
     os.system('chmod +x buck.pex')
 
 with open('.buckconfig.local', 'w') as f:

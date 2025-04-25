@@ -3,3 +3,5 @@
 buck-out
 .ccls-cache/
 *.log
+buck.pex
+.ccls

@@ -2,39 +2,65 @@
 
 *Caracal: Contention Management with Deterministic Concurrency Control* - SOSP'21 [Paper](https://dl.acm.org/doi/10.1145/3477132.3483591) [Slides](https://docs.google.com/presentation/d/1yTEkQ7fRucArBguChkD3p_b6TOoqPdAK_rfSb7DBwog/edit?usp=sharing) [Talk](https://youtu.be/QZ8sMvck654) [Long Talk](https://youtu.be/NUWl4dSfA1c)
 
-Build
+Build (Modified)
 =====
 
-If you on the CSL cluster, you don't need to install any
-dependencies. Otherwise, you need to install Clang 8 manually.
-
-1. First, run the configure script
+1. First, run the configure script to download the build tool `buck` and generate local config file for it.
 
 ```
 ./configure
 ```
 
-to download the build tool `buck` and generate local config file for it.
+Note that the author's link for downloading `buck` is obsolete/invalid, and we replaced the valid link by retrieving `buck` from JitPack.
 
-2. Now you can use `buck` to build. You can either use the `buck.pex`
-downloaded by the script, or if you're on the CSL cluster, `buck`
-installed in the environment.
+2. Now use `buck.pex` that downloaded from previous step to build.
 
 The command
 
 ```
-buck build db
+./build_buck.sh build db
 ```
 
-will generate the debug binary to `buck-out/gen/db#debug`. If you need
-optimized build, you can run
+will generate the debug binary to `buck-out/gen/db#debug`. 
+
+If you need optimized build, you can run
 
 ```
-buck build db_release
+./build_buck.sh build db_release
 ```
 
 to generate the release binary to `buck-out/gen/db#release`.
 
+Memo
+===
+Setup Java 8 (Buck's Requirement) for building
+-----------------
+1. Check the current Java version:
+```
+which java && java -version
+```
+2. If Java is newer version (most likely), then check if Java 8 is intalled on the environment:
+```
+apt list --installed | grep -i openjdk
+```
+3. Set `JAVA_HOME` and `PATH` to use Java 8
+```
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+If missing files from submodules
+-----------------
+Initialize and Update submodules:
+```
+git submodule init && git submodule update
+```
+Verify whether debug or/and release binaries are built and executable
+-----------------
+```
+find buck-out -name "db#{debug/release}" | cat
+file buck-out/gen/db#debug buck-out/gen/db#release
+```
 
 Run
 ===
@@ -44,7 +70,14 @@ Setting Things Up
 
 Felis need to use HugePages for memory allocation (to reduce
 the TLB misses). Common CSL cluster machines should have these already
-setup, and you may skip this step. The following pre-allocates 400GB
+setup, and you may skip this step.
+
+The following command checks current system's HugePages configuration
+```
+cat /proc/sys/vm/nr_hugepages
+```
+
+The following pre-allocates 400GB
 of HugePages. You can adjust the amount depending on your memory
 size. (Each HugePage is 2MB by default in Linux.)
 
